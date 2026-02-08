@@ -7,6 +7,18 @@ FLAG = os.environ.get("FLAG","CTF{dev}")
 
 stock = 1
 
+@app.route("/")
+def index():
+    return """
+<h2>Flash Sale Backend</h2>
+<p>Limited stock checkout API for campaign users.</p>
+<ul>
+<li>POST /buy</li>
+<li>GET /health</li>
+</ul>
+<p>Only one item available.</p>
+"""
+
 @app.route("/health")
 def health():
     return "ok"
@@ -15,7 +27,6 @@ def health():
 def buy():
     global stock
 
-    # BUG: no locking / atomic check
     if stock > 0:
         stock -= 1
         if stock < 0:
@@ -25,4 +36,5 @@ def buy():
     return jsonify({"error":"sold out"})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, threaded=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, threaded=True)
